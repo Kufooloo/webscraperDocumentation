@@ -16,7 +16,50 @@
            
         </div>
         <br>I worked on the code for the project.   
-        <br>All of the code found in var.py, htmlpage.py and webscraper_2.py was done by me, excluding the twilio bits. 
+        <br>All of the code found in var.py, htmlpage.py and webscraper_2.py was done by me, excluding the twilio bits. from bs4 import BeautifulSoup
+from twilio.rest import Client
+import urllib.request
+# from htmlpage import url
+from distutils.util import strtobool
+from var import debug
+import time
+readLink=''
+timeToScan = input('time in mins between scan')
+def main():
+ 
+ global debug
+ account_sid = "AC4608a11d47e81b63bacf49e971b37a6d"
+ auth_token = "1c7acc0edb9999293d401b3826d83a57"
+ client = Client(account_sid, auth_token)
+ messageBody = ""
+ sendMessage=False 
+ global readLink
+ urlToScrape = 'https://www.amazon.com/Best-Sellers/zgbs' #amazon top page
+ f = open('htmlpage.py', mode='a+')
+ fp = urllib.request.urlopen(str(urlToScrape))
+ mybytes = fp.read()
+ i = False
+ mystr = mybytes.decode("utf8")
+ fp.close()
+ html_doc=mystr
+ soup = BeautifulSoup(html_doc, 'html.parser') #bsoup code. 
+ link = soup.find('a', attrs={'class' : 'a-link-normal'})
+ endlink = link['href']
+ fulllink = 'amazon.com'+endlink
+ if fulllink != readLink.lstrip(): #decides what to text
+   messageBody = 'The number one toy has changed! '
+ else:
+   messageBody = "The number one toy is the same! "
+ f.write("url = '" + fulllink + "'\n") 
+ fp = urllib.request.urlopen('https://'+str(fulllink))
+ mybytes = fp.read()
+ i = False
+ mystr = mybytes.decode("utf8")
+ fp.close()
+ html_doc=mystr
+ soup2 = BeautifulSoup(html_doc, 'html.parser')
+ title = soup2.find('span', attrs={'id' : 'productTitle'}).text #finds the title of the highest toy
+ title = str(title)
    
         
         
